@@ -51,3 +51,10 @@ def chunk_documents(
             if end >= len(text):
                 break
     return chunks
+
+
+def format_context(docs: list[Document]) -> str:
+    blocks: list[str] = []
+    for i, doc in enumerate(docs, start=1):
+        blocks.append(f"[{i}] {doc.page_content}")
+    return "\n\n".join(blocks)
