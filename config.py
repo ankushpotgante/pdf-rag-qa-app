@@ -11,6 +11,8 @@ dotenv.load_dotenv()
 DATA_DIR = Path("data")
 INDEX_DIR = Path("faiss_index")
 EMBEDDING_MODEL = "text-embedding-3-small"
+CHUNK_SIZE = 1200
+CHUNK_OVERLAP = 200
 CHAT_MODEL = "gpt-3.5-turbo"
 TEMPERATURE = 0.0
 NO_ANSWER_FALLBACK = "I don't know from the provided context."
