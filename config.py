@@ -15,10 +15,14 @@ CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 200
 CHAT_MODEL = "gpt-3.5-turbo"
 TEMPERATURE = 0.0
+TOP_K = 16
 NO_ANSWER_FALLBACK = "I don't know from the provided context."
 
 # read API key from environment variables
-OPENAI_API_KEY = os.getenv("TEAMIFIED_OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("TEAMIFIED_OPENAI_API_KEY", None)
+
+if not OPENAI_API_KEY:
+        raise ValueError("OPENAI_API_KEY is missing. Set it in your .env file.")
 
 # initialize LLM
 llm = ChatOpenAI(api_key=OPENAI_API_KEY, model=CHAT_MODEL, temperature=TEMPERATURE)

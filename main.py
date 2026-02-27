@@ -3,7 +3,7 @@ from pathlib import Path
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from utils import read_pdfs_from_data_folder, chunk_documents, format_context
-from config import DATA_DIR, INDEX_DIR, embeddings, llm, CHUNK_OVERLAP, CHUNK_SIZE, NO_ANSWER_FALLBACK
+from config import DATA_DIR, INDEX_DIR, embeddings, llm, CHUNK_OVERLAP, CHUNK_SIZE, NO_ANSWER_FALLBACK, TOP_K
 
 
 def build_or_load_vectorstore(embeddings, index_dir: Path, chunks: list[Document]):
@@ -34,8 +34,8 @@ def build_prompt(context: str, question: str) -> str:
     )
 
 
-def answer_question_with_context(llm, vectorstore, question: str):
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 16})
+def answer_question_with_context(llm, vectorstore, question: str, k: int = 16):
+    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
     retrieved_docs = retriever.invoke(question)
     context = format_context(retrieved_docs)
 
@@ -49,14 +49,24 @@ def main():
     chunks = chunk_documents(docs=docs, chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     
     vectorstore = build_or_load_vectorstore(embeddings=embeddings, index_dir=INDEX_DIR, chunks=chunks)
-    question = "When did the EDSA People Power Revolution happen?"
-    answer, retrieved_docs = answer_question_with_context(llm=llm, vectorstore=vectorstore, question=question)
-    print("Question:", question)
-    print("Answer:", answer)
-    print("\nRetrieved Context:")
+    
+    question = input("\nAsk a question: ").strip()
+    if not question:
+        print("No question provided.")
+        return
+    
+    answer, retrieved_docs = answer_question_with_context(llm=llm, vectorstore=vectorstore, question=question, k=TOP_K)
+    
+    print("\n --- Question ---\n", question)
+    
+    print("\n --- Retrieved Context ----")
     for doc in retrieved_docs:
         print(f"- {doc.page_content[:100]}...".replace("\n", " "))
 
+    print("\n --- Answer ---\n", answer)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"Something went wrong: {e}")
