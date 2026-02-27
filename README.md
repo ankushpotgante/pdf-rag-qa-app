@@ -19,6 +19,7 @@ A PDF Retrieval-Augmented Generation (LangChain + PyMuPDF + FAISS + OpenAI)  app
 - `.env.example`: Sample file for API key configuration
 - `data/`: Input PDFs
 - `faiss_index/`: Generated vector index (gitignored)
+- `tests/`: Test cases files
 
 
 ## Requirements
@@ -72,6 +73,13 @@ Output sections:
 - `--- Retrieved Context ---` (retrieved context blocks)
 - `--- Answer ---`
 
+## Testing
+
+Run all tests:
+
+```powershell
+python -m pytest
+```
 
 ## Notes
 
